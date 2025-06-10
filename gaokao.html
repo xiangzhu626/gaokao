@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高考志愿填报助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#FF7D00',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        neutral: '#86909C',
+                        light: '#F2F3F5',
+                        dark: '#1D2129',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 4px 20px rgba(0, 0, 0, 0.08)',
+                        'card-hover': '0 8px 30px rgba(0, 0, 0, 0.12)',
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #165DFF 0%, #4080FF 100%);
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .animate-float {
+                animation: float 3s ease-in-out infinite;
+            }
+            @keyframes float {
+                0% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+                100% { transform: translateY(0px); }
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 text-dark">
+    <!-- 顶部导航栏 -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-graduation-cap text-primary text-2xl"></i>
+                <span class="text-xl font-bold text-primary">高考志愿填报助手</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#home" class="text-dark hover:text-primary transition-colors duration-200">首页</a>
+                <a href="#features" class="text-dark hover:text-primary transition-colors duration-200">功能介绍</a>
+                <a href="#guide" class="text-dark hover:text-primary transition-colors duration-200">使用指南</a>
+                <a href="#about" class="text-dark hover:text-primary transition-colors duration-200">关于我们</a>
+            </div>
+            <button class="md:hidden text-dark focus:outline-none" id="menu-toggle">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white shadow-lg absolute w-full" id="mobile-menu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="#home" class="py-2 px-4 hover:bg-light rounded-lg transition-colors duration-200">首页</a>
+                <a href="#features" class="py-2 px-4 hover:bg-light rounded-lg transition-colors duration-200">功能介绍</a>
+                <a href="#guide" class="py-2 px-4 hover:bg-light rounded-lg transition-colors duration-200">使用指南</a>
+                <a href="#about" class="py-2 px-4 hover:bg-light rounded-lg transition-colors duration-200">关于我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section id="home" class="bg-gradient-blue text-white py-16 md:py-24">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-shadow mb-4">
+                    智能志愿填报<br>开启美好未来
+                </h1>
+                <p class="text-lg md:text-xl opacity-90 mb-8 max-w-lg">
+                    基于历年数据和AI算法，为您提供精准的志愿填报建议，让每一分都发挥最大价值。
+                </p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#calculator" class="bg-white text-primary font-medium py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 text-center">
+                        开始填报 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                    <a href="#guide" class="bg-transparent border-2 border-white text-white font-medium py-3 px-8 rounded-lg hover:bg-white/10 transition-all duration-300 text-center">
+                        了解更多
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <div class="relative">
+                    <img src="https://picsum.photos/id/201/600/400" alt="高考志愿填报" class="rounded-lg shadow-2xl animate-float">
+                    <div class="absolute -bottom-5 -right-5 bg-secondary text-white rounded-lg py-2 px-4 shadow-lg">
+                        <p class="font-bold">99.8%</p>
+                        <p class="text-sm">院校匹配准确率</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-0">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-[60px] md:h-[80px]">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-white"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-white"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-white"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- 主要功能区 -->
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">强大功能，助您一臂之力</h2>
+                <p class="text-neutral text-lg max-w-2xl mx-auto">我们提供全面且专业的志愿填报指导，从多个维度为您分析最优选择</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 功能卡片1 -->
+                <div class="bg-light rounded-xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa fa-line-chart text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">院校精准推荐</h3>
+                    <p class="text-neutral mb-4">基于历年录取数据和您的分数，提供最匹配的院校列表，帮您找到最适合的目标。</p>
+                    <a href="#calculator" class="text-primary font-medium flex items-center">
+                        立即体验 <i class="fa fa-long-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <!-- 功能卡片2 -->
+                <div class="bg-light rounded-xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa fa-graduation-cap text-secondary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">专业前景分析</h3>
+                    <p class="text-neutral mb-4">深入分析各专业就业趋势、薪资水平和发展前景，帮助您选择有潜力的专业。</p>
+                    <a href="#calculator" class="text-secondary font-medium flex items-center">
+                        立即体验 <i class="fa fa-long-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <!-- 功能卡片3 -->
+                <div class="bg-light rounded-xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa fa-bar-chart text-success text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">录取概率预测</h3>
+                    <p class="text-neutral mb-4">基于大数据分析，预测您被各院校录取的概率，让志愿填报更加科学合理。</p>
+                    <a href="#calculator" class="text-success font-medium flex items-center">
+                        立即体验 <i class="fa fa-long-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <!-- 功能卡片4 -->
+                <div class="bg-light rounded-xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-warning/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa fa-map-marker text-warning text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">地区选择分析</h3>
+                    <p class="text-neutral mb-4">提供各地区教育资源、就业环境和生活成本分析，帮助您选择理想的就读地区。</p>
+                    <a href="#calculator" class="text-warning font-medium flex items-center">
+                        立即体验 <i class="fa fa-long-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <!-- 功能卡片5 -->
+                <div class="bg-light rounded-xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-danger/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa fa-file-text-o text-danger text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">志愿表生成</h3>
+                    <p class="text-neutral mb-4">一键生成科学合理的志愿表，包含梯度填报建议，降低滑档风险。</p>
+                    <a href="#calculator" class="text-danger font-medium flex items-center">
+                        立即体验 <i class="fa fa-long-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <!-- 功能卡片6 -->
+                <div class="bg-light rounded-xl p-8 shadow-card hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa fa-users text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">专家在线咨询</h3>
+                    <p class="text-neutral mb-4">提供专业老师在线咨询服务，解答志愿填报疑问，让您的选择更加明智。</p>
+                    <a href="#calculator" class="text-primary font-medium flex items-center">
+                        立即体验 <i class="fa fa-long-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 志愿填报计算器 -->
+    <section id="calculator" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">开始您的志愿填报</h2>
+                <p class="text-neutral text-lg max-w-2xl mx-auto">只需几步，获取最适合您的志愿填报方案</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto">
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mr-3">1</span>
+                        基本信息填写
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="student-name" class="block text-sm font-medium text-gray-700 mb-2">姓名</label>
+                            <input type="text" id="student-name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200" placeholder="请输入您的姓名">
+                        </div>
+                        
+                        <div>
+                            <label for="student-province" class="block text-sm font-medium text-gray-700 mb-2">省份</label>
+                            <select id="student-province" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200">
+                                <option value="">请选择省份</option>
+                                <option value="北京">北京</option>
+                                <option value="上海">上海</option>
+                                <option value="天津">天津</option>
+                                <option value="重庆">重庆</option>
+                                <option value="河北">河北</option>
+                                <option value="山西">山西</option>
+                                <option value="辽宁">辽宁</option>
+                                <option value="吉林">吉林</option>
+                                <option value="黑龙江">黑龙江</option>
+                                <option value="江苏">江苏</option>
+                                <option value="浙江">浙江</option>
+                                <option value="安徽">安徽</option>
+                                <option value="福建">福建</option>
+                                <option value="江西">江西</option>
+                                <option value="山东">山东</option>
+                                <option value="河南">河南</option>
+                                <option value="湖北">湖北</option>
+                                <option value="湖南">湖南</option>
+                                <option value="广东">广东</option>
+                                <option value="海南">海南</option>
+                                <option value="四川">四川</option>
+                                <option value="贵州">贵州</option>
+                                <option value="云南">云南</option>
+                                <option value="陕西">陕西</option>
+                                <option value="甘肃">甘肃</option>
+                                <option value="青海">青海</option>
+                                <option value="内蒙古">内蒙古</option>
+                                <option value="广西">广西</option>
+                                <option value="西藏">西藏</option>
+                                <option value="宁夏">宁夏</option>
+                                <option value="新疆">新疆</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">科类</label>
+                            <div class="flex space-x-4">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="category" value="文科" class="w-4 h-4 text-primary focus:ring-primary/20 border-gray-300">
+                                    <span class="ml-2">文科</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="category" value="理科" class="w-4 h-4 text-primary focus:ring-primary/20 border-gray-300">
+                                    <span class="ml-2">理科</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="exam-score" class="block text-sm font-medium text-gray-700 mb-2">高考分数</label>
+                            <input type="number" id="exam-score" min="0" max="750" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200" placeholder="请输入您的高考分数">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center mr-3">2</span>
+                        志愿偏好设置
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="preferred-school" class="block text-sm font-medium text-gray-700 mb-2">期望院校</label>
+                            <input type="text" id="preferred-school" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200" placeholder="请输入期望院校，如北京大学、清华大学等">
+                        </div>
+                        
+                        <div>
+                            <label for="preferred-major" class="block text-sm font-medium text-gray-700 mb-2">期望专业</label>
+                            <input type="text" id="preferred-major" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200" placeholder="请输入期望专业，如计算机科学与技术、临床医学等">
+                        </div>
+                        
+                        <div>
+                            <label for="preferred-location" class="block text-sm font-medium text-gray-700 mb-2">期望地区</label>
+                            <select id="preferred-location" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200">
+                                <option value="">不限</option>
+                                <option value="北京">北京</option>
+                                <option value="上海">上海</option>
+                                <option value="广州">广州</option>
+                                <option value="深圳">深圳</option>
+                                <option value="杭州">杭州</option>
+                                <option value="南京">南京</option>
+                                <option value="武汉">武汉</option>
+                                <option value="成都">成都</option>
+                                <option value="西安">西安</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="school-type" class="block text-sm font-medium text-gray-700 mb-2">院校类型</label>
+                            <select id="school-type" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200">
+                                <option value="">不限</option>
+                                <option value="985">985院校</option>
+                                <option value="211">211院校</option>
+                                <option value="双一流">双一流院校</option>
+                                <option value="普通本科">普通本科</option>
+                                <option value="专科">专科</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">志愿优先级</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="priority" value="school" class="w-4 h-4 text-primary focus:ring-primary/20 border-gray-300">
+                                <span class="ml-2">院校优先</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="priority" value="major" class="w-4 h-4 text-primary focus:ring-primary/20 border-gray-300">
+                                <span class="ml-2">专业优先</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="priority" value="location" class="w-4 h-4 text-primary focus:ring-primary/20 border-gray-300">
+                                <span class="ml-2">地区优先</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <button id="submit-btn" class="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center">
+                        <i class="fa fa-search mr-2"></i> 获取志愿推荐
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 推荐结果区域 -->
+            <div id="result-section" class="mt-16 hidden">
+                <div class="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-success text-white flex items-center justify-center mr-3">3</span>
+                        志愿推荐结果
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <div class="bg-light rounded-lg p-4 mb-6">
+                            <div class="flex flex-wrap items-center justify-between">
+                                <div class="mb-2 mr-4">
+                                    <span class="text-neutral">姓名：</span>
+                                    <span id="result-name" class="font-medium">张三</span>
+                                </div>
+                                <div class="mb-2 mr-4">
+                                    <span class="text-neutral">省份：</span>
+                                    <span id="result-province" class="font-medium">北京市</span>
+                                </div>
+                                <div class="mb-2 mr-4">
+                                    <span class="text-neutral">科类：</span>
+                                    <span id="result-category" class="font-medium">理科</span>
+                                </div>
+                                <div class="mb-2 mr-4">
+                                    <span class="text-neutral">分数：</span>
+                                    <span id="result-score" class="font-medium">650</span>
+                                </div>
+                                <div class="mb-2 mr-4">
+                                    <span class="text-neutral">数据更新：</span>
+                                    <span id="data-update-time" class="font-medium">2025-06-09</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold text-lg">院校推荐列表</h4>
+                            <div class="flex space-x-2">
+                                <button id="refresh-data-btn" class="text-sm text-primary bg-primary/10 px-3 py-1 rounded-full flex items-center">
+                                    <i class="fa fa-refresh mr-1"></i> 更新数据
+                                </button>
+                                <button class="text-sm text-primary bg-primary/10 px-3 py-1 rounded-full">
+                                    <i class="fa fa-download mr-1"></i> 导出结果
+                                </button>
+                                <button class="text-sm text-primary bg-primary/10 px-3 py-1 rounded-full">
+                                    <i class="fa fa-print mr-1"></i> 打印
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">院校名称</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">院校类型</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">地区</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">推荐专业</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">近三年平均分</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">录取概率</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recommendation-table-body" class="bg-white divide-y divide-gray-200">
+                                    <!-- 结果将通过API动态加载 -->
+                                </tbody>
+                            </table>
+                            <div id="loading-indicator" class="hidden flex justify-center py-4">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h4 class="font-bold text-lg mb-4">志愿填报建议</h4>
+                        <div class="bg-primary/5 rounded-lg p-4 border-l-4 border-primary">
+                            <ul class="space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                                    <span id="recommendation-tip-1">根据您的分数和偏好，建议冲刺前两所院校，稳妥填报中间三所院校，保底选择其他符合条件的院校。</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                                    <span id="recommendation-tip-2">注意各院校专业的选科要求，确保您符合报考条件。</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                                    <span id="recommendation-tip-3">建议关注各院校的招生计划变化和往年录取分数线波动情况。</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                                    <span id="recommendation-tip-4">填报时注意拉开梯度，形成"冲、稳、保"的志愿梯队。</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 flex justify-center">
+                        <button id="new-calculation-btn" class="bg-white border border-primary text-primary hover:bg-primary/5 font-medium py-3 px-8 rounded-lg transition-all duration-300 flex items-center">
+                            <i class="fa fa-refresh mr-2"></i> 重新计算
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 使用指南 -->
+    <section id="guide" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">使用指南</h2>
+                <p class="text-neutral text-lg max-w-2xl mx-auto">轻松几步，完成志愿填报</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- 步骤1 -->
+                <div class="bg-light rounded-xl p-8 relative">
+                    <div class="absolute -top-4 -left-4 w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg">1</div>
+                    <div class="mt-6">
+                        <h3 class="text-xl font-bold mb-4">填写基本信息</h3>
+                        <p class="text-neutral">输入您的姓名、省份、科类和高考分数，这些信息是生成准确志愿推荐的基础。</p>
+                    </div>
+                </div>
+                
+                <!-- 步骤2 -->
+                <div class="bg-light rounded-xl p-8 relative">
+                    <div class="absolute -top-4 -left-4 w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg">2</div>
+                    <div class="mt-6">
+                        <h3 class="text-xl font-bold mb-4">设置志愿偏好</h3>
+                        <p class="text-neutral">选择您期望的院校、专业、地区和院校类型，以及志愿填报的优先级，系统将根据您的偏好进行推荐。</p>
+                    </div>
+                </div>
+                
+                <!-- 步骤3 -->
+                <div class="bg-light rounded-xl p-8 relative">
+                    <div class="absolute -top-4 -left-4 w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg">3</div>
+                    <div class="mt-6">
+                        <h3 class="text-xl font-bold mb-4">获取推荐结果</h3>
+                        <p class="text-neutral">点击"获取志愿推荐"按钮，系统将根据您提供的信息和偏好，生成个性化的志愿推荐方案。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 max-w-4xl mx-auto">
+                <div class="bg-gradient-blue rounded-2xl shadow-xl p-8 text-white">
+                    <h3 class="text-2xl font-bold mb-6">志愿填报常见问题</h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-xl font-medium mb-2 flex items-center">
+                                <i class="fa fa-question-circle mr-2"></i> 如何判断院校和专业的匹配度？
+                            </h4>
+                            <p class="opacity-90">我们的系统会根据您的分数、历年院校录取数据和专业要求，综合评估您被各院校和专业录取的可能性，并给出匹配度评分。</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xl font-medium mb-2 flex items-center">
+                                <i class="fa fa-question-circle mr-2"></i> 什么是"冲、稳、保"志愿策略？
+                            </h4>
+                            <p class="opacity-90">"冲、稳、保"是志愿填报的重要策略。"冲"是指选择略高于自己分数的院校，争取超常发挥；"稳"是指选择与自己分数相当的院校，确保有较大把握被录取；"保"是指选择低于自己分数的院校，确保有学可上。</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xl font-medium mb-2 flex items-center">
+                                <i class="fa fa-question-circle mr-2"></i> 地区对志愿填报有多大影响？
+                            </h4>
+                            <p class="opacity-90">地区因素对志愿填报有重要影响。一线城市和发达地区的院校往往资源丰富、就业机会多，但竞争也更激烈；而中西部地区的院校可能在某些专业上有独特优势，且录取分数线相对较低。</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xl font-medium mb-2 flex items-center">
+                                <i class="fa fa-question-circle mr-2"></i> 如何查看各院校的详细信息？
+                            </h4>
+                            <p class="opacity-90">在推荐结果页面，点击院校名称后的"查看详情"链接，您可以查看院校的详细信息，包括院校简介、专业设置、历年录取分数线、就业情况等。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa fa-graduation-cap text-primary text-2xl"></i>
+                        <span class="text-xl font-bold">高考志愿填报助手</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">为高三考生提供专业、精准的志愿填报指导，让每一分都发挥最大价值。</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-200">
+                            <i class="fa fa-weibo"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-200">
+                            <i class="fa fa-wechat"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-200">
+                            <i class="fa fa-qq"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">快速链接</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors duration-200">首页</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-white transition-colors duration-200">功能介绍</a></li>
+                        <li><a href="#calculator" class="text-gray-400 hover:text-white transition-colors duration-200">志愿填报</a></li>
+                        <li><a href="#guide" class="text-gray-400 hover:text-white transition-colors duration-200">使用指南</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">资源中心</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">院校库</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">专业库</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">历年分数线</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">报考指南</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">联系我们</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fa fa-envelope-o mr-2 text-primary"></i>
+                            <span class="text-gray-400">support@example.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-phone mr-2 text-primary"></i>
+                            <span class="text-gray-400">400-123-4567</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-map-marker mr-2 text-primary mt-1"></i>
+                            <span class="text-gray-400">北京市海淀区中关村大街1号</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
+                <p>© 2025 高考志愿填报助手 版权所有 | 京ICP备12345678号</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-2', 'shadow');
+                navbar.classList.remove('py-3');
+            } else {
+                navbar.classList.add('py-3');
+                navbar.classList.remove('py-2', 'shadow');
+            }
+        });
+        
+        // 移动端菜单切换
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 关闭移动端菜单
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+        
+        // 获取当前日期
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // 更新数据时间
+        document.getElementById('data-update-time').textContent = formatDate(new Date());
+        
+        // 显示加载状态
+        function showLoading() {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+            document.getElementById('recommendation-table-body').classList.add('hidden');
+        }
+        
+        // 隐藏加载状态
+        function hideLoading() {
+            document.getElementById('loading-indicator').classList.add('hidden');
+            document.getElementById('recommendation-table-body').classList.remove('hidden');
+        }
+        
+        // 生成录取概率标签
+        function getAdmissionProbabilityTag(probability) {
+            if (probability >= 80) {
+                return '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">稳妥</span>';
+            } else if (probability >= 50) {
+                return '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">冲刺</span>';
+            } else {
+                return '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">挑战</span>';
+            }
+        }
+        
+        // 生成院校类型标签
+        function getSchoolTypeTag(type) {
+            if (type === '985/211') {
+                return '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">985/211</span>';
+            } else if (type === '211') {
+                return '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">211</span>';
+            } else if (type === '双一流') {
+                return '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">双一流</span>';
+            } else {
+                return '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">普通本科</span>';
+            }
+        }
+        
+        // 获取志愿推荐数据
+        function fetchRecommendations(province, category, score, preferredSchool, preferredMajor, preferredLocation, schoolType, priority) {
+            showLoading();
+            
+            // 这里应该是实际的API调用，这里使用模拟数据
+            // 实际应用中应替换为真实的API endpoint
+            const apiUrl = `https://api.example.com/college-recommendations?province=${province}&category=${category}&score=${score}&preferredSchool=${preferredSchool}&preferredMajor=${preferredMajor}&preferredLocation=${preferredLocation}&schoolType=${schoolType}&priority=${priority}`;
+            
+            // 模拟API请求延迟
+            setTimeout(() => {
+                // 模拟API返回的数据
+                const mockData = {
+                    schools: [
+                        { name: '清华大学', type: '985/211', location: '北京', major: '计算机科学与技术', avgScore: 680, probability: 40 },
+                        { name: '北京大学', type: '985/211', location: '北京', major: '数学与应用数学', avgScore: 678, probability: 45 },
+                        { name: '上海交通大学', type: '985/211', location: '上海', major: '电子信息工程', avgScore: 665, probability: 70 },
+                        { name: '复旦大学', type: '985/211', location: '上海', major: '物理学', avgScore: 660, probability: 75 },
+                        { name: '浙江大学', type: '985/211', location: '浙江', major: '电气工程及其自动化', avgScore: 655, probability: 85 }
+                    ],
+                    tips: [
+                        `根据您的${score}分和偏好，建议冲刺前两所院校，稳妥填报中间三所院校，保底选择其他符合条件的院校。`,
+                        "注意各院校专业的选科要求，确保您符合报考条件。",
+                        "建议关注各院校的招生计划变化和往年录取分数线波动情况。",
+                        "填报时注意拉开梯度，形成'冲、稳、保'的志愿梯队。"
+                    ]
+                };
+                
+                // 更新表格数据
+                const tableBody = document.getElementById('recommendation-table-body');
+                tableBody.innerHTML = '';
+                
+                mockData.schools.forEach(school => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-50 transition-colors duration-200';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">${school.name}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            ${getSchoolTypeTag(school.type)}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${school.location}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${school.major}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${school.avgScore}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            ${getAdmissionProbabilityTag(school.probability)}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-primary">
+                            <a href="#" class="hover:underline">查看详情</a>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // 更新建议
+                document.getElementById('recommendation-tip-1').textContent = mockData.tips[0];
+                document.getElementById('recommendation-tip-2').textContent = mockData.tips[1];
+                document.getElementById('recommendation-tip-3').textContent = mockData.tips[2];
+                document.getElementById('recommendation-tip-4').textContent = mockData.tips[3];
+                
+                // 更新数据时间
+                document.getElementById('data-update-time').textContent = formatDate(new Date());
+                
+                hideLoading();
+            }, 1000);
+        }
+        
+        // 志愿填报表单提交
+        document.getElementById('submit-btn').addEventListener('click', function() {
+            // 简单验证
+            const name = document.getElementById('student-name').value;
+            const province = document.getElementById('student-province').value;
+            const categoryElement = document.querySelector('input[name="category"]:checked');
+            const score = document.getElementById('exam-score').value;
+            
+            if (!name || !province || !categoryElement || !score) {
+                alert('请填写完整的基本信息！');
+                return;
+            }
+            
+            const category = categoryElement.value;
+            const preferredSchool = document.getElementById('preferred-school').value;
+            const preferredMajor = document.getElementById('preferred-major').value;
+            const preferredLocation = document.getElementById('preferred-location').value;
+            const schoolType = document.getElementById('school-type').value;
+            const priorityElement = document.querySelector('input[name="priority"]:checked');
+            const priority = priorityElement ? priorityElement.value : 'school';
+            
+            // 更新结果区域信息
+            document.getElementById('result-name').textContent = name;
+            document.getElementById('result-province').textContent = province;
+            document.getElementById('result-category').textContent = category;
+            document.getElementById('result-score').textContent = score;
+            
+            // 获取推荐数据
+            fetchRecommendations(province, category, score, preferredSchool, preferredMajor, preferredLocation, schoolType, priority);
+            
+            // 显示结果区域
+            document.getElementById('result-section').classList.remove('hidden');
+            
+            // 滚动到结果区域
+            document.getElementById('result-section').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+        
+        // 重新计算按钮
+        document.getElementById('new-calculation-btn').addEventListener('click', function() {
+            // 重置表单
+            document.getElementById('student-name').value = '';
+            document.getElementById('student-province').value = '';
+            document.querySelectorAll('input[name="category"]').forEach(radio => {
+                radio.checked
